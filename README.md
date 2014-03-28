@@ -65,7 +65,7 @@ POS-MA2-0016   max     30 дней на максимальной скорост�
 yota-cli switch --code POS-MA2-0003
 ```
 
-and you tariff will be switched to 'POS-MA2-0003'
+and you tariff will be switched to `POS-MA2-0003`
 
 
 # yota-cli can show your balance
