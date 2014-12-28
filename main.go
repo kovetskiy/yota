@@ -26,7 +26,7 @@ func main() {
 	username := args["--user"].(string)
 	password := args["--pass"].(string)
 
-	yota := yota.New(username, password)
+	yota := yota.NewClient(username, password)
 
 	err = yota.Login()
 	if err != nil {
@@ -44,7 +44,7 @@ func main() {
 	}
 }
 
-func listMode(yota *yota.Yota) {
+func listMode(yota *yota.Client) {
 	tariffs, err := yota.GetTariffs()
 	if err != nil {
 		fmt.Println(err)
@@ -64,7 +64,7 @@ func listMode(yota *yota.Yota) {
 	}
 }
 
-func balanceMode(yota *yota.Yota) {
+func balanceMode(yota *yota.Client) {
 	balance, err := yota.GetBalance()
 	if err != nil {
 		fmt.Println(err)
@@ -74,7 +74,7 @@ func balanceMode(yota *yota.Yota) {
 	fmt.Printf("%d", balance)
 }
 
-func switchMode(yota *yota.Yota, args map[string]interface{}) {
+func switchMode(yota *yota.Client, args map[string]interface{}) {
 	tariffs, err := yota.GetTariffs()
 	if err != nil {
 		fmt.Println(err)
