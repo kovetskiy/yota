@@ -26,9 +26,9 @@ func main() {
 	username := args["--user"].(string)
 	password := args["--pass"].(string)
 
-	yota := yota.NewClient(username, password)
+	yotaCli := yota.NewClient(username, password, nil)
 
-	err = yota.Login()
+	err = yotaCli.Login()
 	if err != nil {
 		fmt.Printf("Could not login: %s", err.Error())
 		os.Exit(1)
@@ -36,16 +36,29 @@ func main() {
 
 	switch {
 	case args["list"]:
-		listMode(yota)
+		listMode(yotaCli)
+
 	case args["switch"]:
-		switchMode(yota, args)
+		query := map[string]string{
+			"Code":  "",
+			"Speed": "",
+		}
+
+		if args["--code"] != nil {
+			query["Code"] = args["--code"].(string)
+		} else if args["--speed"] != nil {
+			query["Speed"] = args["--speed"].(string)
+		}
+
+		switchMode(yotaCli, query)
+
 	case args["balance"]:
-		balanceMode(yota)
+		balanceMode(yotaCli)
 	}
 }
 
-func listMode(yota *yota.Client) {
-	tariffs, err := yota.GetTariffs()
+func listMode(yotaCli *yota.Client) {
+	tariffs, err := yotaCli.GetTariffs()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -64,8 +77,8 @@ func listMode(yota *yota.Client) {
 	}
 }
 
-func balanceMode(yota *yota.Client) {
-	balance, err := yota.GetBalance()
+func balanceMode(yotaCli *yota.Client) {
+	balance, err := yotaCli.GetBalance()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -74,19 +87,18 @@ func balanceMode(yota *yota.Client) {
 	fmt.Printf("%d", balance)
 }
 
-func switchMode(yota *yota.Client, args map[string]interface{}) {
-	tariffs, err := yota.GetTariffs()
+func switchMode(yotaCli *yota.Client, query map[string]string) {
+	tariffs, err := yotaCli.GetTariffs()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
 	for _, tariff := range tariffs {
-		found := (args["--code"] != nil && tariff.Code == args["--code"].(string)) ||
-			(args["--speed"] != nil && tariff.Speed == args["--speed"].(string))
+		found := tariff.Code == query["Code"] || tariff.Speed == query["--speed"]
 
 		if found {
-			err := yota.ChangeTariff(tariff)
+			err := yotaCli.ChangeTariff(tariff)
 			if err != nil {
 				fmt.Println(err)
 				os.Exit(1)
@@ -105,11 +117,11 @@ func parseArgs(cmd []string) (map[string]interface{}, error) {
 	help := `Yota Cli.
 
 Usage:
-  yota [options] list --user USERNAME --pass PASSWORD
-  yota [options] switch (--code=<code>|--speed=<speed>) --user=<username> --pass=<password>
-  yota [options] balance --user USERNAME --pass PASSWORD
-  yota -h | --help
-  yota -v | --version
+  yota-cli [options] list --user USERNAME --pass PASSWORD
+  yota-cli [options] switch (--code CODE|--speed SPEED) --user USERNAME --pass PASSWORD
+  yota-cli [options] balance --user USERNAME --pass PASSWORD
+  yota-cli -h | --help
+  yota-cli -v | --version
 
 Options:
   -h --help           Show this help.
