@@ -1,13 +1,13 @@
 Intro
 =====
 
-yota-cli - it's application to work with an Internet service provider yota.ru
+yota - it's application to work with an Internet service provider yota.ru
 
 Installation
 ============
 
 ```
-go get github.com/kovetskiy/yota-cli
+go get github.com/kovetskiy/yota
 ```
 
 Configuration
@@ -15,26 +15,17 @@ Configuration
 
 ~/.config/yotarc:
 ```
---user
-  user@host.local
-
---password
-  stupidpassword
-```
-
-or you can just append cmd with the args
-
-```
-yota-cli list --user user@host.local --password stupidpassword
+username = "user@host.local"
+password = "stupidpassword"
 ```
 
 Usage
 =====
 
-# yota-cli can list all tariffs
+# yota can list all tariffs
 
 ```
-yota-cli list
+yota -L
 ```
 
 output will be:
@@ -59,19 +50,18 @@ POS-MA2-0015   10.0    30 дней на скорости до 10,0 Мбит/се
 POS-MA2-0016   max     30 дней на максимальной скорости за 1000 руб.
 ```
 
-# yota-cli can change tariff
+# yota can change tariff
 
 ```
-yota-cli switch --code POS-MA2-0003
+yota -C -s <speed>
+yota -C -c <code>
 ```
 
-and you tariff will be switched to `POS-MA2-0003`
 
-
-# yota-cli can show your balance
+# yota can show your balance
 
 ```
-yota-cli balance
+yota -B
 ```
 
 
@@ -81,14 +71,14 @@ Tricks
 Add this to the crontab and save your money!
 ```
 # switch 1.0mb/s
-0 2 0 0 0 yota-cli switch --speed 1.0
+0 2 0 0 0 yota -C -s 1.0
 
 # switch to 7.2mb/s
-0 7 0 0 0 yota-cli switch --speed 7.2
+0 7 0 0 0 yota -C -s 7.2
 
 # switch 1.0mb/s
-0 9 0 0 0 yota-cli switch --speed 1.0
+0 9 0 0 0 yota -C -s 1.0
 
 # switch to 7.2mb/s
-0 19 0 0 0 yota-cli switch --speed 7.2
+0 19 0 0 0 yota -C -s 7.2
 ```
