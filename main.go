@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	usage = `yota-cli 2.0
+	usage = `yota-cli 2.2
 
 Usage:
   yota-cli [options] -C -c <code>
@@ -24,19 +24,19 @@ Usage:
   yota-cli -v | --version
 
 Options:
-  -h --help      Show this help.
-  -v --version   Show version
-  -C             Change tariff.
-	-c  <code>   Specify tariff by code like 'POS-1234-567'
-	-s <speed>   Specify tariff by speed (float like '1.0' or just 'max')
-  -L             List all tariffs.
-  -B             Show balance.
-  -f <config>    Specify configuratin file [default: ~/.config/yotarc]
+  -C            Change tariff.
+    -c <code>   Specify tariff by code like 'POS-1234-567'
+    -s <speed>  Specify tariff by speed (float like '1.0' or just 'max')
+  -L            List all tariffs.
+  -B            Show balance.
+  -f <config>   Specify configuratin file [default: ~/.config/yotarc]
+  -h --help     Show this screen.
+  -v --version  Show version.
 `
 )
 
 func main() {
-	args, err := docopt.Parse(usage, nil, true, "2.0", true)
+	args, err := docopt.Parse(usage, nil, true, "2.2", true)
 	if err != nil {
 		panic(err)
 	}
@@ -90,17 +90,16 @@ func listTariffs(yotaClient *yota.Client) error {
 		return err
 	}
 
-	format := "%-12s %-5s %s\n"
+	format := "%s %-12s %-5s %s\n"
 
-	fmt.Printf(format, "code", "speed", "name")
+	fmt.Printf(format, " ", "code", "speed", "name")
 	for _, tariff := range tariffs {
-		name := ""
+		label := " "
 		if tariff.Active {
-			name = "[active] "
+			label = "*"
 		}
-		name = name + tariff.Name
 
-		fmt.Printf(format, tariff.Code, tariff.Speed, name)
+		fmt.Printf(format, label, tariff.Code, tariff.Speed, tariff.Name)
 	}
 
 	return err
