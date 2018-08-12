@@ -20,6 +20,7 @@ Usage:
   yota-cli [options] -C -s <speed>
   yota-cli [options] -L
   yota-cli [options] -B
+  yota-cli [options] -R
   yota-cli -h | --help
   yota-cli -v | --version
 
@@ -29,6 +30,7 @@ Options:
     -s <speed>  Specify tariff by speed (float like '1.0' or just 'max')
   -L            List all tariffs.
   -B            Show balance.
+  -R            Show remains.
   -f <config>   Specify configuratin file [default: ~/.config/yotarc]
   -h --help     Show this screen.
   -v --version  Show version.
@@ -77,6 +79,9 @@ func main() {
 
 	case args["-B"].(bool):
 		err = showBalance(yotaClient)
+
+	case args["-R"].(bool):
+		err = showRemains(yotaClient)
 	}
 
 	if err != nil {
@@ -106,12 +111,21 @@ func listTariffs(yotaClient *yota.Client) error {
 }
 
 func showBalance(yotaClient *yota.Client) error {
-	balance, err := yotaClient.GetBalance()
+	balance, currency, err := yotaClient.GetBalance()
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("%d\n", balance)
+	fmt.Printf("%.2f %s\n", balance, currency)
+	return nil
+}
+
+func showRemains(yotaClient *yota.Client) error {
+	remains, err := yotaClient.GetRemains()
+	if err != nil {
+		return err
+	}
+	fmt.Printf("%s\n", remains)
 	return nil
 }
 
